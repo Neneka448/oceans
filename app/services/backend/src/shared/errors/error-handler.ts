@@ -14,6 +14,14 @@ type ErrorBody = {
 export const registerErrorHandler = (app: FastifyInstance): void => {
   app.setErrorHandler((error: Error, request: FastifyRequest, reply: FastifyReply) => {
     if (error instanceof AppError) {
+      const field =
+        error.details &&
+        typeof error.details === "object" &&
+        "field" in error.details &&
+        typeof (error.details as { field?: unknown }).field === "string"
+          ? ((error.details as { field: string }).field as string)
+          : undefined;
+
       request.log.warn(
         {
           error_code: error.code,
@@ -27,7 +35,8 @@ export const registerErrorHandler = (app: FastifyInstance): void => {
         ok: false,
         error: {
           code: error.code,
-          message: error.message
+          message: error.message,
+          field
         }
       };
 
