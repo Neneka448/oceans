@@ -8,6 +8,8 @@ import { loggerOptions } from "./shared/logging/logger.js";
 import { registerErrorHandler } from "./shared/errors/error-handler.js";
 import { registerRequestLoggingHooks } from "./shared/logging/request-logging.js";
 import { exampleRoutes } from "./modules/example/interface/http/example-routes.js";
+import { assignRoutes } from "./modules/assign/interface/http/assign-routes.js";
+import { taskRoutes } from "./modules/task/interface/http/task-routes.js";
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -26,6 +28,8 @@ export const buildApp = (): FastifyInstance => {
 
   app.get("/healthz", async () => ({ ok: true, service: env.SERVICE_NAME }));
   app.register(exampleRoutes, { prefix: "/example" });
+  app.register(assignRoutes);
+  app.register(taskRoutes);
 
   return app;
 };

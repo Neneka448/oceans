@@ -38,3 +38,22 @@
 - 非参与者创建 Task 返回 403 或业务错误
 - 非法状态流转返回 task.invalid_status_transition
 - parent_task_id 自引用正确，层级查询可用
+
+## 当前实现说明（Dev-03）
+- 代码目录：
+  - `app/services/backend/src/modules/assign/**`
+  - `app/services/backend/src/modules/task/**`
+- 已实现接口路由模块：
+  - `assign/interface/http/assign-routes.ts`
+  - `task/interface/http/task-routes.ts`
+- 规则落点：
+  - Assign 审核/撤回状态规则在 Domain `assign-application.ts`
+  - Task 状态流转规则在 Domain `task.ts`
+  - 权限决策在 Application `assign-service.ts` 与 `task-service.ts`
+- 事件产出：
+  - Assign：`AssignApplied` / `AssignReviewed` / `AssignWithdrawn`
+  - Task：`TaskCreated` / `TaskUpdated`
+- 单测覆盖：
+  - 重复申请（`assign.already_applied`）
+  - 非法状态流转（`task.invalid_status_transition`）
+  - 无权限创建/更新（`assign.not_approved` / `task.not_assignee`）
