@@ -1,4 +1,4 @@
-import { afterEach, describe, it } from "node:test";
+import { afterEach, describe, it } from "vitest";
 import assert from "node:assert/strict";
 import Fastify, { type FastifyInstance } from "fastify";
 import { registerErrorHandler } from "../../../../shared/errors/error-handler.js";

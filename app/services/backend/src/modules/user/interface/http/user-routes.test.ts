@@ -1,4 +1,4 @@
-import test, { afterEach, beforeEach } from "node:test";
+import { test, afterEach, beforeEach } from "vitest";
 import assert from "node:assert/strict";
 import type { FastifyInstance } from "fastify";
 import { resetAuthMemoryStore } from "../../../auth/infra/auth-memory-store.js";

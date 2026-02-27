@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { AppError } from "../../../shared/errors/app-error.js";
 import { AssignErrorCode } from "../../assign/domain/assign-error-code.js";
 import { RequirementParticipantMemoryRepository } from "../../assign/infra/requirement-participant-memory-repository.js";

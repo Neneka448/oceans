@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { ConnectionAppService } from "./connection-app-service.js";
 import { WsMessageHandler } from "./ws-message-handler.js";
 import { InMemoryConnectionRepository } from "../infra/in-memory-connection-repository.js";

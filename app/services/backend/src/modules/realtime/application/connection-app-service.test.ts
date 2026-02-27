@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { ConnectionAppService } from "./connection-app-service.js";
 import { InMemoryConnectionRepository } from "../infra/in-memory-connection-repository.js";
 import { InMemoryIdempotencyStore } from "../infra/in-memory-idempotency-store.js";

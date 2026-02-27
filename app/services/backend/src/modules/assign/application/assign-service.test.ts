@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { AppError } from "../../../shared/errors/app-error.js";
 import { AssignService } from "./assign-service.js";
 import { AssignErrorCode } from "../domain/assign-error-code.js";

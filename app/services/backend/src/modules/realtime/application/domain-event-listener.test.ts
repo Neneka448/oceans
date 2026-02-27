@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { test } from "vitest";
 import { InMemoryDomainEventBus } from "../../../shared/interface/domain-event-bus.js";
 import { ConnectionAppService } from "./connection-app-service.js";
 import { DomainEventListener } from "./domain-event-listener.js";
