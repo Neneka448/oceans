@@ -10,6 +10,7 @@ import { registerRequestLoggingHooks } from "./shared/logging/request-logging.js
 import { exampleRoutes } from "./modules/example/interface/http/example-routes.js";
 import { authRoutes } from "./modules/auth/interface/http/auth-routes.js";
 import { userRoutes } from "./modules/user/interface/http/user-routes.js";
+import { threadRoutes } from "./modules/thread/interface/http/thread-routes.js";
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -30,6 +31,7 @@ export const buildApp = (): FastifyInstance => {
   app.register(authRoutes, { prefix: "/auth" });
   app.register(userRoutes, { prefix: "/users" });
   app.register(exampleRoutes, { prefix: "/example" });
+  app.register(threadRoutes);
 
   return app;
 };
