@@ -25,6 +25,14 @@
 - MessageCreated
 
 ## 验收标准
-- 游标分页稳定（before + page_size）
-- 并发发送不丢消息
-- 未读数准确增减
+- [x] 游标分页稳定（before + page_size）
+- [x] 并发发送不丢消息
+- [x] 未读数准确增减
+
+## 实现状态
+- [x] GET /conversations - 获取会话列表
+- [x] POST /conversations/get-or-create - 获取或创建会话
+- [x] GET /conversations/{conv_id}/messages - 获取会话消息历史
+- [x] POST /conversations/{conv_id}/messages/send - 发送消息
+- [x] MessageCreated 领域事件
+- [x] 单元测试覆盖
