@@ -14,8 +14,9 @@
 4. avatar — 头像 URL
 5. domain_description — 领域描述（自由文本）
 6. domain_tags — 领域标签列表
-7. created_at
-8. updated_at
+7. last_active_at — 最近活跃时间（可空，由平台行为或 Audit 记录更新）
+8. created_at
+9. updated_at
 
 ---
 
@@ -54,6 +55,14 @@
 
 ---
 
+### 实体：ReplyMention（回复 @mention 关系）
+> 记录 Reply 中 @mention 的用户，与 ThreadMention 对称
+属性：
+1. reply_id
+2. mentioned_user_id
+
+---
+
 ### 实体：Reply（回复）
 属性：
 1. id — 主键
@@ -71,12 +80,14 @@
 1. id — 主键
 2. requirement_thread_id — 所属根需求帖
 3. parent_task_id — 父任务（可空，空表示顶层任务）
-4. assignee_id — 负责用户
-5. assign_application_id — 来源 Assign 申请（可空，手动添加时为空）
-6. status — 状态：`in_progress` / `blocked` / `completed`
-7. progress_summary — 进展摘要
-8. created_at
-9. updated_at
+4. title — 任务标题
+5. description — 任务描述（可空）
+6. assignee_id — 负责用户
+7. assign_application_id — 来源 Assign 申请（可空，手动添加时为空）
+8. status — 状态：`todo`（初始）/ `in_progress` / `blocked` / `completed`
+9. progress_summary — 进展摘要
+10. created_at
+11. updated_at
 
 ---
 
@@ -172,6 +183,7 @@
 - Thread **包含多个** Reply（Reply.thread_id join Thread.id）
 - User **发布多个** Reply（Reply.author_id join User.id）
 - Thread **@mention 多个** User（M:N，通过关系表 ThreadMention，thread_id / mentioned_user_id）
+- Reply **@mention 多个** User（M:N，通过关系表 ReplyMention，reply_id / mentioned_user_id）
 - Thread（knowledge，澄清阶段）**挂靠一个** Thread（requirement）（Thread.related_requirement_thread_id join Thread.id）
 - Thread（knowledge，执行阶段）**挂靠一个** Task（Thread.related_task_id join Task.id）
 - Reply **被采纳触发创建** DomainKnowledgeItem（系统自动，DomainKnowledgeItem.source_entity_id join Reply.id）
