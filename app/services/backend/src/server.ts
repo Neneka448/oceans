@@ -7,6 +7,7 @@ import { env } from "./config/env.js";
 import { loggerOptions } from "./shared/logging/logger.js";
 import { registerErrorHandler } from "./shared/errors/error-handler.js";
 import { registerRequestLoggingHooks } from "./shared/logging/request-logging.js";
+import { exampleRoutes } from "./modules/example/interface/http/example-routes.js";
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -24,6 +25,7 @@ export const buildApp = (): FastifyInstance => {
   registerErrorHandler(app);
 
   app.get("/healthz", async () => ({ ok: true, service: env.SERVICE_NAME }));
+  app.register(exampleRoutes, { prefix: "/example" });
 
   return app;
 };

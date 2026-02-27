@@ -188,10 +188,99 @@ graph LR
 
 ---
 
-## 8. 完成定义（DoD）
+## 8. 后端实现规范（必须遵守）
+
+### 8.1 后端系统与架构分层
+- 后端目录：`app/services/backend`
+- 技术栈：Node.js + TypeScript + Fastify（Yarn 管理）
+- 推荐分层：
+  1) Interface 层：HTTP/WS 路由、请求解析、响应封装
+  2) Application 层：用例编排、事务边界、权限决策入口
+  3) Domain 层：实体/值对象/领域规则/领域事件
+  4) Infra 层：DB 仓储、消息/事件适配、外部依赖实现
+- 原则：
+  - HTTP 承担业务请求（GET 幂等读，POST 其他）
+  - WS 仅用于推送，不承载业务写操作
+  - 控制器不写业务规则，业务规则必须下沉到 Application/Domain
+
+### 8.1.1 目录规范（DDD）
+- 统一目录结构（示例）：
+
+```text
+app/services/backend/src/
+  config/
+  shared/
+    errors/
+    logging/
+    interface/
+  modules/
+    <module-name>/
+      interface/
+        http/
+      application/
+      domain/
+      infra/
+  server.ts
+  main.ts
+```
+
+- 约束：
+  - `modules/<module>/interface/http` 只放路由与请求/响应映射。
+  - `modules/<module>/application` 只做用例编排，不直接依赖 HTTP 细节。
+  - `modules/<module>/domain` 只放领域对象/规则，不依赖 Fastify。
+  - `modules/<module>/infra` 放仓储与外部依赖实现。
+  - `shared/interface` 放接口层通用约定（如统一响应结构、RouteModule 类型）。
+
+### 8.1.2 接口层写法规范（HTTP）
+- 每个模块都应导出一个路由模块（如 `exampleRoutes`），由 `server.ts` 聚合注册。
+- 接口层函数仅负责：参数读取、调用 Application、返回统一结构。
+- 成功响应统一使用：`{ ok: true, data }`。
+- 错误统一通过抛 `AppError` 进入全局处理器，不在路由里手写散乱 `reply.status(...).send(...)`。
+- 路由命名保持业务语义清晰：GET 用于查询，POST 用于写操作/状态变更。
+
+### 8.2 日志系统规范
+- 统一使用 Fastify logger（Pino）输出结构化日志（JSON）。
+- 日志字段至少包含：`timestamp`、`level`、`service`、`env`、`request_id`、`event`。
+- 禁止输出敏感信息：密码、token、cookie、密钥、完整隐私 payload。
+- 错误日志必须带：`error_code`（若有）、`status_code`（若有）、`stack`（服务端保留）。
+
+### 8.3 日志覆盖要求
+- 每个 HTTP 请求至少两条日志：
+  1) `request.received`
+  2) `request.completed`（含 status_code、response_time_ms）
+- 每个业务异常至少一条 warn/error 日志，并包含可定位上下文（request_id、核心业务 ID）。
+- 每个未捕获异常必须落 error 级别日志。
+- 关键状态变更必须记录审计型日志（如 assign 审核、task 状态变更、reply 采纳）。
+
+### 8.4 错误处理与 try-catch 规范
+- 错误码必须使用 enum 统一管理（如 `ErrorCode`），禁止魔法字符串散落。
+- 业务可预期错误：抛 `AppError`（携带 `code` + `statusCode` + message）。
+- 全局错误处理器统一转为响应：
+  - 成功：`{ ok: true, data }`
+  - 失败：`{ ok: false, error: { code, message, field? } }`
+- try-catch 使用规范：
+  - Controller 层尽量不写大面积 try-catch，交由全局 error handler 收敛
+  - 与外部系统交互（DB/第三方/IO）处必须捕获并转换为领域可理解错误
+  - catch 中禁止吞错，必须 `log + rethrow` 或转换后抛出
+
+### 8.5 单元测试写法与提交要求
+- 每个业务模块至少覆盖以下测试类型：
+  1) 正常路径（Happy Path）
+  2) 参数校验失败路径
+  3) 权限失败路径
+  4) 关键状态流转与边界条件
+- 单元测试命名采用“行为 + 预期”风格（例如：`should_reject_assign_when_status_not_pending`）。
+- 测试必须可重复运行且相互隔离：禁止依赖执行顺序，禁止共享可变全局状态。
+- 外部依赖（DB/消息/第三方）必须 mock 或使用测试替身，单测不得访问真实生产资源。
+- 新增/修改业务规则时，必须同步新增/修改对应单元测试。
+- 提交前必须通过**全部单元测试**；未通过测试的提交视为无效提交。
+
+---
+
+## 9. 完成定义（DoD）
 一个功能算完成，必须同时满足：
 - 接口实现完成 + 参数校验 + 权限校验
 - 错误码符合统一规范
-- 单测/接口测试通过
+- 单测/接口测试通过（提交前必须通过全部单元测试）
 - 事件已发出并完成通知/WS联调（若该功能涉及事件）
 - 文档同步完成（至少接口文档 + `db.sql`）
