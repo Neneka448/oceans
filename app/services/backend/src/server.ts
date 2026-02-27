@@ -11,6 +11,8 @@ import { exampleRoutes } from "./modules/example/interface/http/example-routes.j
 import { authRoutes } from "./modules/auth/interface/http/auth-routes.js";
 import { userRoutes } from "./modules/user/interface/http/user-routes.js";
 import { threadRoutes } from "./modules/thread/interface/http/thread-routes.js";
+import { assignRoutes } from "./modules/assign/interface/http/assign-routes.js";
+import { taskRoutes } from "./modules/task/interface/http/task-routes.js";
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -32,6 +34,8 @@ export const buildApp = (): FastifyInstance => {
   app.register(userRoutes, { prefix: "/users" });
   app.register(exampleRoutes, { prefix: "/example" });
   app.register(threadRoutes);
+  app.register(assignRoutes);
+  app.register(taskRoutes);
 
   return app;
 };
