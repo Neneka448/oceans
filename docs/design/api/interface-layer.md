@@ -386,7 +386,8 @@ Query: ?type=requirement&status=open&tags=backend&keyword=登录&page=1&page_siz
 {
   "requirement_thread_id": string,   // 挂到哪个需求帖
   "title": string,
-  "description"?: string
+  "description"?: string,
+  "assignee_id"?: string              // 管理员/需求发布者可指定，普通用户不传则默认自己
 }
 
 // Response data
@@ -412,7 +413,7 @@ Query: ?type=requirement&status=open&tags=backend&keyword=登录&page=1&page_siz
   "task_id": string, "title": string, "description": string,
   "requirement_thread_id": string, "parent_task_id": string | null,
   "assignee_id": string, "assignee_name": string,
-  "status": "in_progress" | "blocked" | "completed",
+  "status": "todo" | "in_progress" | "blocked" | "completed",
   "progress_summary": string,
   "sub_tasks": [{ "task_id": string, "title": string, "status": string }],
   "related_threads": [{ "thread_id": string, "title": string, "status": string }],
