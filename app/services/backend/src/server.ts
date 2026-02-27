@@ -13,6 +13,8 @@ import { userRoutes } from "./modules/user/interface/http/user-routes.js";
 import { threadRoutes } from "./modules/thread/interface/http/thread-routes.js";
 import { assignRoutes } from "./modules/assign/interface/http/assign-routes.js";
 import { taskRoutes } from "./modules/task/interface/http/task-routes.js";
+import { notificationRoutes } from "./modules/notification/interface/http/notification-routes.js";
+import { realtimeRoutes } from "./modules/realtime/interface/http/realtime-routes.js";
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -36,6 +38,8 @@ export const buildApp = (): FastifyInstance => {
   app.register(threadRoutes);
   app.register(assignRoutes);
   app.register(taskRoutes);
+  app.register(notificationRoutes);
+  app.register(realtimeRoutes);
 
   return app;
 };
