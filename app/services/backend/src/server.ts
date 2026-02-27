@@ -15,6 +15,46 @@ import { assignRoutes } from "./modules/assign/interface/http/assign-routes.js";
 import { taskRoutes } from "./modules/task/interface/http/task-routes.js";
 import { notificationRoutes } from "./modules/notification/interface/http/notification-routes.js";
 import { realtimeRoutes } from "./modules/realtime/interface/http/realtime-routes.js";
+import { ConversationService } from "./modules/conversation/application/conversation-service.js";
+import { ConversationMemoryRepository } from "./modules/conversation/infra/conversation-memory-repository.js";
+import { UserMemoryRepository } from "./modules/conversation/infra/user-memory-repository.js";
+import { createConversationRoutes } from "./modules/conversation/interface/http/conversation-routes.js";
+import { MessageService } from "./modules/message/application/message-service.js";
+import { MessageMemoryRepository } from "./modules/message/infra/message-memory-repository.js";
+import { createMessageRoutes } from "./modules/message/interface/http/message-routes.js";
+import { InMemoryDomainEventPublisher } from "./shared/events/domain-event-publisher.js";
+
+// 简单的ID生成器
+let idCounter = 0;
+const generateId = (): string => {
+  idCounter++;
+  return `${Date.now()}-${idCounter}-${Math.random().toString(36).substring(2, 11)}`;
+};
+
+// 共享的基础设施实例
+const conversationRepo = new ConversationMemoryRepository();
+const messageRepo = new MessageMemoryRepository();
+const userRepo = new UserMemoryRepository();
+const eventPublisher = new InMemoryDomainEventPublisher();
+
+// 创建测试用户（MVP阶段）
+userRepo.createTestUsers();
+
+// 创建服务实例
+const conversationService = new ConversationService(
+  conversationRepo,
+  userRepo,
+  messageRepo,
+  generateId
+);
+
+const messageService = new MessageService(
+  messageRepo,
+  conversationService,
+  userRepo,
+  eventPublisher,
+  generateId
+);
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -40,6 +80,12 @@ export const buildApp = (): FastifyInstance => {
   app.register(taskRoutes);
   app.register(notificationRoutes);
   app.register(realtimeRoutes);
+
+  // 注册 conversation 路由
+  app.register(createConversationRoutes(conversationService), { prefix: "/conversations" });
+
+  // 注册 message 路由
+  app.register(createMessageRoutes(messageService), { prefix: "/conversations/:conv_id/messages" });
 
   return app;
 };
