@@ -4,5 +4,8 @@ export enum ErrorCode {
   NotFound = "common.not_found",
   InvalidParams = "common.invalid_params",
   Conflict = "common.conflict",
-  ServerError = "common.server_error"
+  ServerError = "common.server_error",
+  AuthUsernameTaken = "auth.username_taken",
+  AuthInvalidCredentials = "auth.invalid_credentials",
+  AuthTokenRevoked = "auth.token_revoked"
 }
