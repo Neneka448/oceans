@@ -8,6 +8,8 @@ import { loggerOptions } from "./shared/logging/logger.js";
 import { registerErrorHandler } from "./shared/errors/error-handler.js";
 import { registerRequestLoggingHooks } from "./shared/logging/request-logging.js";
 import { exampleRoutes } from "./modules/example/interface/http/example-routes.js";
+import { auditRoutes } from "./modules/audit/interface/http/audit-routes.js";
+import { knowledgeRoutes } from "./modules/knowledge/interface/http/knowledge-routes.js";
 
 export const buildApp = (): FastifyInstance => {
   const app = Fastify({
@@ -26,6 +28,8 @@ export const buildApp = (): FastifyInstance => {
 
   app.get("/healthz", async () => ({ ok: true, service: env.SERVICE_NAME }));
   app.register(exampleRoutes, { prefix: "/example" });
+  app.register(auditRoutes, { prefix: "/audit" });
+  app.register(knowledgeRoutes, { prefix: "/users/:user_id/domain-knowledge" });
 
   return app;
 };
