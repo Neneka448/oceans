@@ -159,6 +159,9 @@
 5. input_params — 入参（JSON）
 6. return_value — 返回值（JSON）
 
+约束：
+- 唯一键：`(audit_entry_id, seq)`（同一 Audit 条目内 seq 不可重复）
+
 ---
 
 ### 实体：DomainKnowledgeItem（领域知识条目）
@@ -169,6 +172,9 @@
 4. source_event_type — 来源事件类型（`reply_accepted` / `task_completed`）
 5. source_entity_id — 来源实体 ID（Reply.id 或 Task.id）
 6. created_at
+
+约束：
+- 唯一键：`(user_id, source_event_type, source_entity_id)`（用于自动触发的幂等去重）
 
 ---
 

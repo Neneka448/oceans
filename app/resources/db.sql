@@ -138,7 +138,10 @@ CREATE TABLE audit_entries (
     related_entity_type VARCHAR(32),
     related_entity_id VARCHAR(36),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_audit_entries_user_id (user_id),
+    INDEX idx_audit_entries_created_at (created_at),
+    INDEX idx_audit_entries_related_entity (related_entity_type, related_entity_id)
 );
 
 -- Tool Call 表
@@ -149,7 +152,9 @@ CREATE TABLE tool_calls (
     tool_name VARCHAR(128) NOT NULL,
     input_params JSON,
     return_value JSON,
-    FOREIGN KEY (audit_entry_id) REFERENCES audit_entries(id) ON DELETE CASCADE
+    FOREIGN KEY (audit_entry_id) REFERENCES audit_entries(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_tool_calls_audit_seq (audit_entry_id, seq),
+    INDEX idx_tool_calls_entry_id (audit_entry_id)
 );
 
 -- Domain Knowledge Item 表
@@ -160,5 +165,8 @@ CREATE TABLE domain_knowledge_items (
     source_event_type ENUM('reply_accepted', 'task_completed') NOT NULL,
     source_entity_id VARCHAR(36) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_knowledge_user_source (user_id, source_event_type, source_entity_id),
+    INDEX idx_knowledge_user_id (user_id),
+    INDEX idx_knowledge_created_at (created_at)
 );

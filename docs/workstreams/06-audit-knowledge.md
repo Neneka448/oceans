@@ -22,6 +22,7 @@
 - 支持按 user/time/entity 过滤 Audit
 - ReplyAccepted 触发写入 DomainKnowledgeItem(source_event_type=reply_accepted)
 - TaskCompleted 触发写入 DomainKnowledgeItem(source_event_type=task_completed)
+- 自动触发由 `KnowledgeAutoIngestor` 消费 `reply_accepted` / `task_completed` 事件并执行幂等写入
 
 ## 对外事件
 - AuditEntryCreated

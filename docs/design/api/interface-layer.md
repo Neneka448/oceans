@@ -625,6 +625,36 @@ Query: ?page=1&page_size=20
 }
 ```
 
+**内部事件接入契约（自动写入 DomainKnowledgeItem）**
+```ts
+// reply_accepted 事件（由 Thread/Reply 领域发出）
+{
+  "name": "reply_accepted",
+  "payload": {
+    "userId": string,
+    "replyId": string,
+    "threadId"?: string,
+    "contentSummary"?: string
+  }
+}
+
+// task_completed 事件（由 Task 领域发出）
+{
+  "name": "task_completed",
+  "payload": {
+    "userId": string,
+    "taskId": string,
+    "requirementThreadId"?: string,
+    "contentSummary"?: string
+  }
+}
+```
+
+处理规则：
+- 接收到上述事件后自动写入 `DomainKnowledgeItem`。
+- 去重键固定为 `(user_id, source_event_type, source_entity_id)`。
+- 重复事件不报错，保持幂等。
+
 ---
 
 ## 5. WebSocket 接口
