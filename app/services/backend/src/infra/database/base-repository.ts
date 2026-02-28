@@ -18,12 +18,12 @@ export abstract class BaseRepository {
     this.pool = getPool();
   }
 
-  protected async query<T extends RowDataPacket>(sql: string, params: unknown[] = []): Promise<T[]> {
+  protected async query<T extends RowDataPacket>(sql: string, params: any[] = []): Promise<T[]> {
     const [rows] = await this.pool.execute<T[]>(sql, params);
     return rows;
   }
 
-  protected async execute(sql: string, params: unknown[] = []): Promise<ResultSetHeader> {
+  protected async execute(sql: string, params: any[] = []): Promise<ResultSetHeader> {
     const [result] = await this.pool.execute<ResultSetHeader>(sql, params);
     return result;
   }
@@ -55,7 +55,7 @@ export abstract class BaseRepository {
   protected async queryInTransaction<T extends RowDataPacket>(
     trx: TransactionContext,
     sql: string,
-    params: unknown[] = []
+    params: any[] = []
   ): Promise<T[]> {
     const [rows] = await trx.connection.execute<T[]>(sql, params);
     return rows;
@@ -64,7 +64,7 @@ export abstract class BaseRepository {
   protected async executeInTransaction(
     trx: TransactionContext,
     sql: string,
-    params: unknown[] = []
+    params: any[] = []
   ): Promise<ResultSetHeader> {
     const [result] = await trx.connection.execute<ResultSetHeader>(sql, params);
     return result;
