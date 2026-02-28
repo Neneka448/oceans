@@ -4,6 +4,7 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import { env } from "./config/env.js";
+import { databasePlugin } from "./infra/database/database-pool.js";
 import { loggerOptions } from "./shared/logging/logger.js";
 import { registerErrorHandler } from "./shared/errors/error-handler.js";
 import { registerRequestLoggingHooks } from "./shared/logging/request-logging.js";
@@ -61,6 +62,7 @@ export const buildApp = (): FastifyInstance => {
     disableRequestLogging: true
   });
 
+  app.register(databasePlugin);
   app.register(sensible);
   app.register(cors, { origin: true, credentials: true });
   app.register(helmet);
